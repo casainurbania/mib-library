@@ -1,0 +1,784 @@
+
+-- File Name : SANGFOR-GENERAL-MIB.txt
+-- Date      : Mon Oct 11 17:01:21 CST 2010
+-- Author    : WebNMS Agent Toolkit C Edition - MibEditor 6
+
+
+
+SANGFOR-GENERAL-MIB	DEFINITIONS ::= BEGIN
+	IMPORTS
+		DisplayString, PhysAddress, snmp, system
+			FROM RFC1213-MIB
+		TEXTUAL-CONVENTION, DisplayString
+			FROM SNMPv2-TC
+		OBJECT-TYPE
+			FROM RFC-1212
+		TRAP-TYPE
+			FROM RFC-1215
+		enterprises
+			FROM RFC1155-SMI;
+
+-- TEXTUAL-CONVENTIONS --
+--	PhysAddress ::= 		OCTET STRING
+
+--	DisplayString ::= 		OCTET STRING
+
+	org	OBJECT IDENTIFIER
+		::=  {  iso  3  }
+
+	dod	OBJECT IDENTIFIER
+		::=  {  org  6  }
+
+	internet	OBJECT IDENTIFIER
+		::=  {  dod  1  }
+
+	private	OBJECT IDENTIFIER
+		::=  {  internet  4  }
+
+	enterprises	OBJECT IDENTIFIER
+		::=  {  private  1  }
+
+	sangfor	OBJECT IDENTIFIER
+		::=  {  enterprises  35047  }
+
+	general	OBJECT IDENTIFIER
+		::=  {  sangfor  1  }
+
+	product	OBJECT IDENTIFIER
+		::=  {  sangfor  2  }
+
+	sfDeviceDescr	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Device name&model"
+		::=  {  general  1  }
+
+	sfSysDate	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"System's date."
+		::=  {  general  2  }
+
+	sfSysCpuCostRate	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Cpu current cost percentage.The unit is  %."
+		::=  {  general  3  }
+
+	sfSysFreeMemory	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Free memory."
+		::=  {  general  4  }
+
+	sfDiskTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SfDiskEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	"Description"
+		::=  { general  5 }
+
+	sfDiskEntry	OBJECT-TYPE
+		SYNTAX		SfDiskEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	"Row Description"
+		INDEX		{  diskIndex  }
+		::=  { sfDiskTable 1 }
+
+	SfDiskEntry  ::=  SEQUENCE {
+		diskIndex  INTEGER,
+		sfFilesystemName  DisplayString,
+		sfDiskSize  DisplayString,
+		sfDiskUsed  DisplayString,
+		sfDiskAvail  DisplayString,
+		sfDiskUsedPercent  DisplayString
+		}
+
+
+	diskIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"Column Description"
+		::=  {  sfDiskEntry  1  }
+
+
+	sfFilesystemName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Column Description"
+		::=  {  sfDiskEntry  2  }
+
+
+	sfDiskSize	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Column Description"
+		::=  {  sfDiskEntry  3  }
+
+
+	sfDiskUsed	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Column Description"
+		::=  {  sfDiskEntry  4  }
+
+
+	sfDiskAvail	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Column Description"
+		::=  {  sfDiskEntry  5  }
+
+
+	sfDiskUsedPercent	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Column Description"
+		::=  {  sfDiskEntry  6  }
+
+	cpuLoadAvg	OBJECT IDENTIFIER
+		::=  { general  6 }
+		
+	sfCpuLoadLast1Min	OBJECT-TYPE	
+		SYNTAX			OCTET STRING 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"load average in past 1 minute."
+		::=  {  cpuLoadAvg  1  }
+
+	sfCpuLoadLast5Min	OBJECT-TYPE	
+		SYNTAX			OCTET STRING 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"load average in past 5 minute."
+		::=  {  cpuLoadAvg  2  }
+		
+	sfCpuLoadLast15Min	OBJECT-TYPE	
+		SYNTAX			OCTET STRING 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"load average in past 15 minute."
+		::=  {  cpuLoadAvg  3  }
+
+	sfEnableDoubleHost	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 1  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"0--disable.1--enable"
+		::=  {  general  7  }
+
+	dhcp	OBJECT IDENTIFIER
+		::=  {  general  8  }
+	
+	sfSysTotalMemory	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Total memory"
+		::=  {  general  9  }
+
+	aCSG	OBJECT IDENTIFIER
+		::=  {  product  1  }
+--	:AC BEGIN ---------------------------------------------------------------
+    -- 状态信息文件夹 ------------------------------------------
+	status  OBJECT IDENTIFIER
+	    ::=  {  aCSG 1  }
+	
+	numOfCurOnLine	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of current online users."
+		::=  {  status  1  }
+		
+	numOfMaxOnLine	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the max number of online users."
+		::=  {  status 2  }
+
+	numOfCurOU	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of current orgs."
+		::=  {  status 3  }	
+
+	numOfMaxOU	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the max number of orgs."
+		::=  {  status 4  }	
+
+	numOfMaxSession	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the max number of sessions."
+		::=  {  status 5  }
+
+	numOfSession	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of current sessions."
+		::=  {  status 6  }
+
+	version	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the version of AC/SG decive."
+		::=  {  status 7  }
+
+	gatewayMode	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the mode of gateway."
+		::=  {  status 8  }
+		
+		
+    -- 网口信息列表-----------------------------------------
+	ethTable	OBJECT-TYPE
+		SYNTAX			SEQUENCE  OF  EthEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"if information table"
+		::=  { aCSG  2 }
+
+	ethEntry	OBJECT-TYPE
+		SYNTAX			EthEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"Row Description"
+		INDEX			{  ifIndex  }
+		::=  { ethTable 1 }
+
+	EthEntry  ::=  SEQUENCE {
+		ifIndex			INTEGER,
+		ifName			DisplayString,
+		ifArea			DisplayString,
+		ifLink			DisplayString,
+		ifTxPackets		INTEGER,
+		ifRxPackets		INTEGER,
+		ifTxBytes		INTEGER,
+		ifRxBytes		INTEGER
+		}
+
+	ifIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"if index"
+		::=  {  ethEntry  1  }
+
+	ifName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"interface name"
+		::=  {  ethEntry  2  }
+
+	ifArea	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"link area"
+		::=  {  ethEntry  3  }
+
+	ifLink	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"link status"
+		::=  {  ethEntry  4  }
+
+	ifTxPackets	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Number of send packets per second"
+		::=  {  ethEntry  5  }
+
+	ifRxPackets	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Number of receive packets per second"
+		::=  {  ethEntry  6  }
+
+	ifTxBytes	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Number of send Bytes per second"
+		::=  {  ethEntry  7  }
+
+	ifRxBytes	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Number of receive Bytes per second"
+		::=  {  ethEntry  8  }
+
+	
+	-- 自动升级列表----------------------------------------
+	autoUpdateTable	OBJECT-TYPE
+		SYNTAX			SEQUENCE  OF  AutoUpdateEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"auto update table information"
+		::=  { aCSG  3 }
+
+	autoUpdateEntry	OBJECT-TYPE
+		SYNTAX			AutoUpdateEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"Row Description"
+		INDEX			{  libIndex  }
+		::=  { autoUpdateTable 1 }
+
+	AutoUpdateEntry  ::=  SEQUENCE {
+		libIndex			INTEGER,
+		nameOfLib			DisplayString,
+		currentVersion		DisplayString,
+		latestVersion		DisplayString,
+		updateValidDate		DisplayString,
+		isAutoUpgrade		DisplayString
+		}
+
+	libIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"lib index"
+		::=  {  autoUpdateEntry  1  }
+
+	nameOfLib	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"lib name"
+		::=  {  autoUpdateEntry  2  }
+
+	currentVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"current Version"
+		::=  {  autoUpdateEntry  3  }
+
+	latestVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"latest Version"
+		::=  {  autoUpdateEntry  4  }
+
+	updateValidDate	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"update Valid Date"
+		::=  {  autoUpdateEntry  5  }
+
+	isAutoUpgrade	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"is Auto Upgrade. yes or no"
+		::=  {  autoUpdateEntry  6  }
+
+		
+	-- 序列号列表------------------------------------------
+	snTable	OBJECT-TYPE
+		SYNTAX			SEQUENCE  OF  SnEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"seiral number table"
+		::=  { aCSG  4 }
+
+	snEntry	OBJECT-TYPE
+		SYNTAX			SnEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"Row Description"
+		INDEX			{  snIndex  }
+		::=  { snTable 1 }
+
+	SnEntry  ::=  SEQUENCE {
+	    snIndex             INTEGER,
+		option				DisplayString,
+		deviceSN			DisplayString,
+		antiVirusSN			DisplayString,
+		multiFuncSn			DisplayString,
+		crossOperatorSN		DisplayString,
+		upgradeSN			DisplayString,
+		WlanSN			    DisplayString,
+		appIdentifySN       DisplayString
+		}
+	
+	snIndex         	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"sn index"
+		::=  {  snEntry  1  }
+
+	snOption	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"valid: yes or no"
+		::=  {  snEntry  2  }
+
+	deviceSN	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"device serial number status: yes or no"
+		::=  {  snEntry  3  }
+
+	antiVirusSN	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"anti virus serial number status: yes or no"
+		::=  {  snEntry  4  }
+
+	multiFuncSn	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"multi func serial number status: yes or no"
+		::=  {  snEntry  5  }
+
+	crossOperatorSN	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"cross Operator serial number status: yes or no"
+		::=  {  snEntry  6  }
+
+	upgradeSN	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"upgrade serial number status: yes or no"
+		::=  {  snEntry  7  }
+		
+	WlanSN		OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"Wlan serial number status: yes or no"
+		::=  {  snEntry  8  }
+		
+	appIdentifySN		OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"application identification serial number status: yes or no"
+		::=  {  snEntry  9  }
+
+		
+	-- 日志汇总列表----------------------------------------
+	logsTable	OBJECT-TYPE
+		SYNTAX			SEQUENCE  OF  LogsEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"logs summary table"
+		::=  { aCSG  5 }
+
+	logsEntry	OBJECT-TYPE
+		SYNTAX			LogsEntry
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"Row Description"
+		INDEX		{  logIndex  }
+		::=  { logsTable 1 }
+
+	LogsEntry  ::=  SEQUENCE {
+	    logIndex        INTEGER,
+		option			DisplayString,
+		httpGet			DisplayString,
+		mailTransfer	DisplayString,
+		fileTransfer	DisplayString,
+		webBBS			DisplayString,
+		imChat			DisplayString
+		}
+	
+	logIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"log index"
+		::=  {  logsEntry  1  }
+
+	logOption	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"block/record"
+		::=  {  logsEntry  2  }
+
+	httpGet	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"http get"
+		::=  {  logsEntry  3  }
+
+	mailTransfer	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"send mail or receive mail"
+		::=  {  logsEntry  4  }
+		
+	fileTransfer	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"send file or receive file"
+		::=  {  logsEntry  5  }
+
+	webBBS	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"web BBS"
+		::=  {  logsEntry  6  }
+
+	imChat	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"IM chat"
+		::=  {  logsEntry  7  }
+
+	
+	-- 告警信息文件夹------------------------------------------
+	alarmInfo  OBJECT IDENTIFIER
+	    ::=  {  aCSG 6  }
+	
+	isEnableWarning		OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"enable warning. yes or no."
+		::=  {  alarmInfo  1  }
+		
+	numOfVirus			OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of virus warning."
+		::=  {  alarmInfo  2  }
+		
+	numOfAttack			OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of attack warning."
+		::=  {  alarmInfo  3  }
+		
+	numOfPortScan		OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of port scan warning."
+		::=  {  alarmInfo  4  }
+		
+	numOfAbnormalEmail	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of AbnormalEmail warning."
+		::=  {  alarmInfo  5  }
+		
+	numOfAbnormalFlow	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of AbnormalFlow warning."
+		::=  {  alarmInfo  6  }
+		
+	numOfAbnormalProtocol	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of Abnormal Protocol warning."
+		::=  {  alarmInfo  7  }
+		
+	numOfAbnormalScript	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of Abnormal Script warning."
+		::=  {  alarmInfo  8  }
+		
+	numOfAbnormalPlugIn	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of AbnormalPlugIn warning."
+		::=  {  alarmInfo  9  }
+		
+	numOfGSB			OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of GSB warning."
+		::=  {  alarmInfo  10  }
+		
+	numOfUntrustSSLSite	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of UntrustSSLSite warning."
+		::=  {  alarmInfo  11  }
+		
+	numOfOtherLine		OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"display the number of other line warning."
+		::=  {  alarmInfo  12  }
+		
+		
+	-- 其它信息文件夹----------------------------------------
+	otherInfo  OBJECT IDENTIFIER
+	    ::=  {  aCSG 7  }
+	
+	isEnableAutoDelete	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"auto delete logs: yes or no."
+		::=  {  otherInfo  1  }
+	
+	isEnableBypass	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"it is bypass? yes or no."
+		::=  {  otherInfo  2  }
+	
+	isEnableDroplist	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"it is open droplist? yes or no."
+		::=  {  otherInfo  3  }
+	
+--	:AC END ----------------------------------------------------------------------
+
+	aD	OBJECT IDENTIFIER
+		::=  {  product  2  }
+
+	aPM	OBJECT IDENTIFIER
+		::=  {  product  3  }
+
+	aF	OBJECT IDENTIFIER
+		::=  {  product  4  }
+
+	bM	OBJECT IDENTIFIER
+		::=  {  product  5  }
+
+	iPSecVPN	OBJECT IDENTIFIER
+		::=  {  product  6  }
+
+	nAC	OBJECT IDENTIFIER
+		::=  {  product  7  }
+
+	sC	OBJECT IDENTIFIER
+		::=  {  product  8  }
+
+	sSLVPN	OBJECT IDENTIFIER
+		::=  {  product  10  }
+
+	wANACC	OBJECT IDENTIFIER
+		::=  {  product  11  }
+
+	sfEnableDHCP	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 1  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"0--disable.1--enable."
+		::=  {  dhcp  1  }
+		
+	
+	sfDHCPTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SfDHCPEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	"Table of each interface's DHCP info"
+		::=  { dhcp  2 }	
+
+	sfDHCPEntry	OBJECT-TYPE
+		SYNTAX		SfDHCPEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	"entry of sfDHCPTable, when dhcp is disabled it has only one entry with zeros"
+		INDEX		{  dhcpIndex  }
+		::=  { sfDHCPTable 1 }
+		
+	SfDHCPEntry  ::=  SEQUENCE {
+		dhcpIndex  INTEGER,
+		sfIfName  OCTET STRING,
+		sfNumOfTotalIpAddr  INTEGER,
+		sfNumOfLeftIp  INTEGER,
+		sfNumOfOccupyIp INTEGER
+		}
+		
+	dhcpIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			not-accessible
+		STATUS			mandatory
+		DESCRIPTION		"index of sfDHCPEntry"
+		::=  {  sfDHCPEntry  1  }
+		
+	sfIfName	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"network interface's  name ."
+		::=  {  sfDHCPEntry  2  }
+
+	sfNumOfTotalIpAddr	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"The total IP address's number in IP pool."
+		::=  {  sfDHCPEntry  3  }
+
+	sfNumOfLeftIp	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"The number of left."
+		::=  {  sfDHCPEntry  4  }
+
+	sfNumOfOccupyIp	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		"The number which already be used."
+		::=  {  sfDHCPEntry  5  }
+
+END
